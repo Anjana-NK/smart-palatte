@@ -1,0 +1,146 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Smart Theme</title>
+
+<style>
+body {
+  font-family: sans-serif;
+  background: #806222;
+  color: #ffffff;
+  padding: 20px;
+}
+
+.container {
+  display: flex;
+  gap: 20px;
+}
+
+.card {
+  background: #e9d6ad;
+  padding: 20px;
+  border-radius: 12px;
+  flex: 1;
+}
+
+.preview-img {
+  width: 100%;
+  border-radius: 10px;
+}
+
+.row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.swatch {
+  padding: 20px;
+  border-radius: 8px;
+  color: white;
+  font-size: 12px;
+  text-align: center;
+  font-weight: bold;
+}
+
+.wheel-container {
+  text-align: center;
+  margin-top: 20px;
+}
+
+canvas {
+  border-radius: 50%;
+  cursor: crosshair;
+}
+</style>
+
+</head>
+
+<body>
+
+<h1>🎨 Smart Theme Generator</h1>
+
+<div class="container">
+
+  <div class="card">
+    <h3>Image Preview</h3>
+    <img src="file:///D:/USER FILES/Downloads/Instagram post - 7.png" class="preview-img"/>
+  </div>
+
+  <div class="card">
+    <h3>Theme Colors</h3>
+
+    <div class="row">
+      <div class="swatch" style="background:#e9d6ad">
+        Primary<br>#e9d6ad
+      </div>
+
+      <div class="swatch" style="background:#dee9ad">
+        Secondary<br>#dee9ad
+      </div>
+
+      <div class="swatch" style="background:#adc0e9">
+        Accent<br>#adc0e9
+      </div>
+    </div>
+
+    <button style="background:#adc0e9;padding:10px;border:none;border-radius:6px;color:white;">
+      Sample Button
+    </button>
+  </div>
+
+</div>
+
+<h2>🎡 Clickable Color Wheel</h2>
+
+<div class="wheel-container">
+  <canvas id="colorWheel" width="250" height="250"></canvas>
+  <p>Selected Color: <span id="selectedColor">#000000</span></p>
+</div>
+
+<h2>🎯 Color Combinations</h2>
+<h4>Complementary</h4><div class='row'><div class="swatch" style="background:#e9d6adff">#e9d6adff</div><div class="swatch" style="background:#adc0e9">#adc0e9</div></div><h4>Analogous</h4><div class='row'><div class="swatch" style="background:#e9b8ad">#e9b8ad</div><div class="swatch" style="background:#e9d6adff">#e9d6adff</div><div class="swatch" style="background:#dee9ad">#dee9ad</div></div><h4>Triadic</h4><div class='row'><div class="swatch" style="background:#e9d6adff">#e9d6adff</div><div class="swatch" style="background:#ade9d6">#ade9d6</div><div class="swatch" style="background:#d6ade9">#d6ade9</div></div>
+
+<script>
+const canvas = document.getElementById("colorWheel");
+const ctx = canvas.getContext("2d");
+
+const radius = canvas.width / 2;
+
+// Draw wheel
+for (let angle = 0; angle < 360; angle++) {
+  const start = (angle - 1) * Math.PI / 180;
+  const end = angle * Math.PI / 180;
+
+  ctx.beginPath();
+  ctx.moveTo(radius, radius);
+  ctx.arc(radius, radius, radius, start, end);
+  ctx.closePath();
+
+  ctx.fillStyle = "hsl(" + angle + ", 100%, 50%)";
+  ctx.fill();
+}
+
+// Click detection
+canvas.addEventListener("click", function(e) {
+  const rect = canvas.getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  const y = e.clientY - rect.top;
+
+  const pixel = ctx.getImageData(x, y, 1, 1).data;
+  const hex = rgbToHex(pixel[0], pixel[1], pixel[2]);
+
+  document.getElementById("selectedColor").innerText = hex;
+});
+
+function rgbToHex(r, g, b) {
+  return "#" + [r,g,b].map(x =>
+    x.toString(16).padStart(2, "0")
+  ).join("");
+}
+</script>
+
+</body>
+</html>
