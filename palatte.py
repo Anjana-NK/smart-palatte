@@ -3,7 +3,7 @@ from PIL import Image
 from tkinter import Tk, filedialog
 import webbrowser
 
-# ---------- HELPERS ----------
+#HELPERS
 
 def hex_to_rgb(hex_color):
     hex_color = hex_color.lstrip('#')
@@ -18,7 +18,7 @@ def rgb_to_hsl(rgb):
 def hsl_to_rgb(hsl):
     return colorsys.hls_to_rgb(*hsl)
 
-# ---------- COLOR LOGIC ----------
+#COLOR LOGIC
 
 def adjust_lightness(hsl, factor):
     h, l, s = hsl
@@ -30,14 +30,13 @@ def shift_hue(hsl, degree):
     h = (h + degree/360) % 1
     return (h, l, s)
 
-# ---------- CONTRAST ----------
-
+#CONTRAST 
 def get_text_color(bg_rgb):
     r, g, b = bg_rgb
     luminance = 0.299*r + 0.587*g + 0.114*b
     return '#000000' if luminance > 0.5 else '#ffffff'
 
-# ---------- IMAGE COLOR ----------
+#IMAGE COLOR
 
 def get_dominant_color(image_path):
     img = Image.open(image_path)
@@ -47,7 +46,7 @@ def get_dominant_color(image_path):
     avg = tuple(sum(c)/len(c)/255 for c in zip(*pixels))
     return rgb_to_hex(avg)
 
-# ---------- THEME GENERATOR ----------
+#THEME GENERATOR
 
 def generate_theme(base_hex):
     base_hex = base_hex[:7]  # remove alpha if exists
@@ -69,7 +68,7 @@ def generate_theme(base_hex):
         "text": text
     }
 
-# ---------- COLOR THEORY ----------
+#COLOR THEORY
 
 def get_color_theory(hex_color):
     rgb = hex_to_rgb(hex_color)
@@ -84,7 +83,7 @@ def get_color_theory(hex_color):
         "Triadic": [hex_color, make(120), make(240)]
     }
 
-# ---------- HTML PREVIEW ----------
+#HTML PREVIEW
 
 def export_html(theme, base_color, image_path=None):
     combos = get_color_theory(base_color)
@@ -108,7 +107,7 @@ def export_html(theme, base_color, image_path=None):
 
 <style>
 body {{
-  font-family: sans-serif;
+  font-family: 'Comfortaa', cursive;
   background: {theme['background']};
   color: {theme['text']};
   padding: 20px;
@@ -124,11 +123,12 @@ body {{
   padding: 20px;
   border-radius: 12px;
   flex: 1;
+
 }}
 
 .preview-img {{
   width: 100%;
-  border-radius: 10px;
+  border-radius: 18px;
 }}
 
 .row {{
@@ -161,7 +161,7 @@ canvas {{
 
 <body>
 
-<h1>🎨 Smart Theme Generator</h1>
+<h1>Smart Theme Generator</h1>
 
 <div class="container">
 
@@ -194,14 +194,14 @@ canvas {{
 
 </div>
 
-<h2>🎡 Clickable Color Wheel</h2>
+<h2>Clickable Color Wheel</h2>
 
 <div class="wheel-container">
   <canvas id="colorWheel" width="250" height="250"></canvas>
   <p>Selected Color: <span id="selectedColor">#000000</span></p>
 </div>
 
-<h2>🎯 Color Combinations</h2>
+<h2>Color Combinations</h2>
 {combos_html}
 
 <script>
@@ -211,20 +211,38 @@ const ctx = canvas.getContext("2d");
 const radius = canvas.width / 2;
 
 // Draw wheel
-for (let angle = 0; angle < 360; angle++) {{
-  const start = (angle - 1) * Math.PI / 180;
-  const end = angle * Math.PI / 180;
+function drawWheel() {{
+  for (let angle = 0; angle < 360; angle++) {{
+    const start = (angle - 1) * Math.PI / 180;
+    const end = angle * Math.PI / 180;
 
-  ctx.beginPath();
-  ctx.moveTo(radius, radius);
-  ctx.arc(radius, radius, radius, start, end);
-  ctx.closePath();
+    ctx.beginPath();
+    ctx.moveTo(radius, radius);
+    ctx.arc(radius, radius, radius, start, end);
+    ctx.closePath();
 
-  ctx.fillStyle = "hsl(" + angle + ", 100%, 50%)";
-  ctx.fill();
+    ctx.fillStyle = "hsl(" + angle + ", 100%, 50%)";
+    ctx.fill();
+  }}
 }}
 
-// Click detection
+drawWheel();
+
+// Marker
+function drawMarker(x, y) {{
+  drawWheel();
+
+  ctx.beginPath();
+  ctx.arc(x, y, 6, 0, 2 * Math.PI);
+  ctx.fillStyle = "#ffffff";
+  ctx.fill();
+
+  ctx.strokeStyle = "#000000";
+  ctx.lineWidth = 2;
+  ctx.stroke();
+}}
+
+// Click
 canvas.addEventListener("click", function(e) {{
   const rect = canvas.getBoundingClientRect();
   const x = e.clientX - rect.left;
@@ -234,15 +252,17 @@ canvas.addEventListener("click", function(e) {{
   const hex = rgbToHex(pixel[0], pixel[1], pixel[2]);
 
   document.getElementById("selectedColor").innerText = hex;
+
+  drawMarker(x, y);
 }});
 
+// HEX
 function rgbToHex(r, g, b) {{
   return "#" + [r,g,b].map(x =>
     x.toString(16).padStart(2, "0")
   ).join("");
 }}
 </script>
-
 </body>
 </html>
 """

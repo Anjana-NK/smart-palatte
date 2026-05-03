@@ -7,8 +7,8 @@
 
 <style>
 body {
-  font-family: sans-serif;
-  background: #806222;
+  font-family: 'Comfortaa', cursive;
+  background: #4d473e;
   color: #ffffff;
   padding: 20px;
 }
@@ -19,15 +19,16 @@ body {
 }
 
 .card {
-  background: #e9d6ad;
+  background: #b7b1a6;
   padding: 20px;
   border-radius: 12px;
   flex: 1;
+
 }
 
 .preview-img {
   width: 100%;
-  border-radius: 10px;
+  border-radius: 18px;
 }
 
 .row {
@@ -60,48 +61,48 @@ canvas {
 
 <body>
 
-<h1>🎨 Smart Theme Generator</h1>
+<h1>Smart Theme Generator</h1>
 
 <div class="container">
 
   <div class="card">
     <h3>Image Preview</h3>
-    <img src="file:///D:/USER FILES/Downloads/Instagram post - 7.png" class="preview-img"/>
+    <img src="file:///D:/USER FILES/Downloads/Manuratnam.png" class="preview-img"/>
   </div>
 
   <div class="card">
     <h3>Theme Colors</h3>
 
     <div class="row">
-      <div class="swatch" style="background:#e9d6ad">
-        Primary<br>#e9d6ad
+      <div class="swatch" style="background:#b7b1a6">
+        Primary<br>#b7b1a6
       </div>
 
-      <div class="swatch" style="background:#dee9ad">
-        Secondary<br>#dee9ad
+      <div class="swatch" style="background:#b4b7a6">
+        Secondary<br>#b4b7a6
       </div>
 
-      <div class="swatch" style="background:#adc0e9">
-        Accent<br>#adc0e9
+      <div class="swatch" style="background:#a6acb7">
+        Accent<br>#a6acb7
       </div>
     </div>
 
-    <button style="background:#adc0e9;padding:10px;border:none;border-radius:6px;color:white;">
+    <button style="background:#a6acb7;padding:10px;border:none;border-radius:6px;color:white;">
       Sample Button
     </button>
   </div>
 
 </div>
 
-<h2>🎡 Clickable Color Wheel</h2>
+<h2>Clickable Color Wheel</h2>
 
 <div class="wheel-container">
   <canvas id="colorWheel" width="250" height="250"></canvas>
   <p>Selected Color: <span id="selectedColor">#000000</span></p>
 </div>
 
-<h2>🎯 Color Combinations</h2>
-<h4>Complementary</h4><div class='row'><div class="swatch" style="background:#e9d6adff">#e9d6adff</div><div class="swatch" style="background:#adc0e9">#adc0e9</div></div><h4>Analogous</h4><div class='row'><div class="swatch" style="background:#e9b8ad">#e9b8ad</div><div class="swatch" style="background:#e9d6adff">#e9d6adff</div><div class="swatch" style="background:#dee9ad">#dee9ad</div></div><h4>Triadic</h4><div class='row'><div class="swatch" style="background:#e9d6adff">#e9d6adff</div><div class="swatch" style="background:#ade9d6">#ade9d6</div><div class="swatch" style="background:#d6ade9">#d6ade9</div></div>
+<h2>Color Combinations</h2>
+<h4>Complementary</h4><div class='row'><div class="swatch" style="background:#b7b1a6">#b7b1a6</div><div class="swatch" style="background:#a6acb7">#a6acb7</div></div><h4>Analogous</h4><div class='row'><div class="swatch" style="background:#b7a8a6">#b7a8a6</div><div class="swatch" style="background:#b7b1a6">#b7b1a6</div><div class="swatch" style="background:#b4b7a6">#b4b7a6</div></div><h4>Triadic</h4><div class='row'><div class="swatch" style="background:#b7b1a6">#b7b1a6</div><div class="swatch" style="background:#a6b7b1">#a6b7b1</div><div class="swatch" style="background:#b1a6b7">#b1a6b7</div></div>
 
 <script>
 const canvas = document.getElementById("colorWheel");
@@ -109,21 +110,39 @@ const ctx = canvas.getContext("2d");
 
 const radius = canvas.width / 2;
 
-// Draw wheel
-for (let angle = 0; angle < 360; angle++) {
-  const start = (angle - 1) * Math.PI / 180;
-  const end = angle * Math.PI / 180;
+// 🎨 Draw wheel
+function drawWheel() {
+  for (let angle = 0; angle < 360; angle++) {
+    const start = (angle - 1) * Math.PI / 180;
+    const end = angle * Math.PI / 180;
 
-  ctx.beginPath();
-  ctx.moveTo(radius, radius);
-  ctx.arc(radius, radius, radius, start, end);
-  ctx.closePath();
+    ctx.beginPath();
+    ctx.moveTo(radius, radius);
+    ctx.arc(radius, radius, radius, start, end);
+    ctx.closePath();
 
-  ctx.fillStyle = "hsl(" + angle + ", 100%, 50%)";
-  ctx.fill();
+    ctx.fillStyle = "hsl(" + angle + ", 100%, 50%)";
+    ctx.fill();
+  }
 }
 
-// Click detection
+drawWheel();
+
+// 🎯 Marker
+function drawMarker(x, y) {
+  drawWheel();
+
+  ctx.beginPath();
+  ctx.arc(x, y, 6, 0, 2 * Math.PI);
+  ctx.fillStyle = "#ffffff";
+  ctx.fill();
+
+  ctx.strokeStyle = "#000000";
+  ctx.lineWidth = 2;
+  ctx.stroke();
+}
+
+// 🖱️ Click
 canvas.addEventListener("click", function(e) {
   const rect = canvas.getBoundingClientRect();
   const x = e.clientX - rect.left;
@@ -133,14 +152,16 @@ canvas.addEventListener("click", function(e) {
   const hex = rgbToHex(pixel[0], pixel[1], pixel[2]);
 
   document.getElementById("selectedColor").innerText = hex;
+
+  drawMarker(x, y);
 });
 
+// HEX
 function rgbToHex(r, g, b) {
   return "#" + [r,g,b].map(x =>
     x.toString(16).padStart(2, "0")
   ).join("");
 }
 </script>
-
 </body>
 </html>
